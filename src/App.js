@@ -1,9 +1,26 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import MQTT from "mqtt";
+import RTChart from "react-rt-chart";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: {
+        date: new Date(),
+        val1: 0,
+        val2: 0,
+        val3: 0,
+        val4: 0,
+        val5: 0,
+        val6: 0,
+        val7: 0,
+        val8: 0
+      }
+    };
+  }
+
   mqttSub = () => {
     const client = MQTT.connect({
       port: 9001,
@@ -25,34 +42,49 @@ class App extends Component {
         // console.error(error);
         if (!error) {
           console.log("subscribed");
+          console.log(this.state.data);
         }
       });
       client.on("message", (topic, message) => {
-        console.log("topic", topic, message);
+        this.setState({
+          data: {
+            date: new Date(),
+            val1: message[0],
+            val2: message[1],
+            val3: message[2],
+            val4: message[3],
+            val5: message[4],
+            val6: message[5],
+            val7: message[6],
+            val8: message[7]
+          }
+        });
+        console.log("topic", message, this.state.data);
       });
     });
   };
+
   componentDidMount() {
+    setInterval(() => this.forceUpdate(), 6000);
     this.mqttSub();
   }
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <main className="App">
+        <RTChart
+          fields={[
+            "val1",
+            "val2",
+            "val3",
+            "val4",
+            "val5",
+            "val6",
+            "val7",
+            "val8"
+          ]}
+          data={this.state.data}
+        />
+      </main>
     );
   }
 }
