@@ -72,14 +72,14 @@ class App extends Component {
     this.mqttSub();
   }
   render() {
-    // const chart = {
-    //   axis: {
-    //     // y: { min: 10, max: 70 }
-    //   },
-    //   point: {
-    //     // show: false
-    //   }
-    // };
+    const chart = {
+      //   axis: {
+      //     // y: { min: 10, max: 70 }
+      //   },
+      //   point: {
+      //     // show: false
+      //   }
+    };
     return (
       <main className="App">
         <RTChart
