@@ -46,6 +46,9 @@ class App extends Component {
         }
       });
       client.on("message", (topic, message) => {
+        // if (topic === " /gleb/dev1/out/time_up") {
+        //   debugger;
+        // }
         this.setState({
           data: {
             date: new Date(),
@@ -59,7 +62,7 @@ class App extends Component {
             val8: message[7]
           }
         });
-        console.log("topic", message, this.state.data);
+        console.log("topic", topic, this.state.data);
       });
     });
   };
@@ -69,9 +72,18 @@ class App extends Component {
     this.mqttSub();
   }
   render() {
+    // const chart = {
+    //   axis: {
+    //     // y: { min: 10, max: 70 }
+    //   },
+    //   point: {
+    //     // show: false
+    //   }
+    // };
     return (
       <main className="App">
         <RTChart
+          chart={chart}
           fields={[
             "val1",
             "val2",
