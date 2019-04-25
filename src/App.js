@@ -12,39 +12,26 @@ class App extends Component {
       username: "",
       fulfilled: false,
       password: "",
-      data: {
+      uptime: "",
+      tempIn: {
         date: new Date(),
-        val1: 0,
-        val2: 0,
-        val3: 0,
-        val4: 0,
-        val5: 0,
-        val6: 0,
-        val7: 0,
-        val8: 0
+        degrees: null
       },
-      temp: {
+      tempOut: {
         date: new Date(),
-        val01: 0,
-        val02: 0,
-        val03: 0,
-        val04: 0,
-        val05: 0,
-        val06: 0,
-        val07: 0
+        degrees: null
       }
     };
   }
-
+  uintToString = uintArray => {
+    var encodedString = String.fromCharCode.apply(null, uintArray),
+      decodedString = decodeURIComponent(escape(encodedString));
+    return decodedString;
+  };
   mqttSub = (protocol, host, port, user, pass) => {
     const client = MQTT.connect({
       port: port,
       host: host,
-      // clientId:
-      //   "ui_" +
-      //   Math.random()
-      //     .toString(16)
-      //     .substr(2, 8),
       path: "/mqtt",
       protocol: protocol,
       username: user,
@@ -67,40 +54,29 @@ class App extends Component {
           // console.log(this.state.data);
         }
       });
+      client.subscribe("/" + user + "/dev1/out/temp_in", { qos: 1 }, error => {
+        // console.error(error);
+        if (!error) {
+          console.log("subscribed");
+          // console.log(this.state.data);
+        }
+      });
       client.on("message", (topic, message) => {
-        console.log(topic, message);
+        console.log(topic, this.uintToString(message));
 
         if (topic === "/" + user + "/dev1/out/time_up") {
-          this.setState({
-            data: {
-              date: new Date(),
-              val1: message[0],
-              val2: message[1],
-              val3: message[2],
-              val4: message[3],
-              val5: message[4],
-              val6: message[5],
-              val7: message[6],
-              val8: message[7]
-            }
-          });
+          this.setState({ uptime: this.uintToString(message) });
         }
         if (topic === "/" + user + "/dev1/out/temp_out") {
           this.setState({
-            temp: {
-              date: new Date(),
-              val01: message[0],
-              val02: message[1],
-              val03: message[2],
-              val04: message[3],
-              val05: message[4],
-              val06: message[5],
-              val07: message[6]
-            }
+            tempOut: { date: new Date(), degrees: this.uintToString(message) }
           });
         }
-
-        // console.log("topic", topic, this.state.data);
+        if (topic === "/" + user + "/dev1/out/temp_in") {
+          this.setState({
+            tempIn: { date: new Date(), degrees: this.uintToString(message) }
+          });
+        }
       });
     });
   };
@@ -205,32 +181,20 @@ class App extends Component {
         </form>
         {this.state.fulfilled && (
           <>
+            <h2>Uptime {this.state.uptime}</h2>
+            <hr />
+            <h2>Temperature outside ℃</h2>
             <RTChart
               chart={chart}
-              fields={[
-                "val1",
-                "val2",
-                "val3",
-                "val4",
-                "val5",
-                "val6",
-                "val7",
-                "val8"
-              ]}
-              data={this.state.data}
+              fields={["degrees"]}
+              data={this.state.tempOut}
             />
+            <hr />
+            <h2>Socket temperature ℃</h2>
             <RTChart
               chart={chart}
-              fields={[
-                "val01",
-                "val02",
-                "val03",
-                "val04",
-                "val05",
-                "val06",
-                "val07"
-              ]}
-              data={this.state.temp}
+              fields={["degrees"]}
+              data={this.state.tempIn}
             />
           </>
         )}
