@@ -4,9 +4,7 @@ html {
 }
 body {
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family:  "Trebuchet MS", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
@@ -25,19 +23,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-form {
-  display: flex;
-  flex-direction: column;
-}
-fieldset {
-  display: flex;
-  justify-content: space-between;
-  min-width: 250px;
-}
-button {
-  padding: 20px;
-  font-size: 16px;
-}
+
 
 /*-- Chart --*/
 .c3 svg {
